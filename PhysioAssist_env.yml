@@ -1,0 +1,12 @@
+name: PhysioAssist_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+# General:
+  - python=3.8
+  - numpy
+  - opencv
+  - pytube
+  - jupyterlab
+  - pandas
