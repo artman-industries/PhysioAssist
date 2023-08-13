@@ -14,6 +14,7 @@ def main():
     db = get_database()
     for index, db_row in db.iterrows():
         num_samples = 10  # todo: define it as a script parameter
+
         function_parameters = get_data_from_db_row(db_row) + [num_samples]
         frames = get_frames_from_video(*function_parameters)
         skeletons = predict_skeletons(frames)

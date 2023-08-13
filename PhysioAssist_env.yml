@@ -10,3 +10,6 @@ dependencies:
   - pytube
   - jupyterlab
   - pandas
+  - pytorch
+  - lightning
+  - tk
