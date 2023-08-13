@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import cv2
 import os
-import subprocess
+from download_video import download_video
 
 
 def display_frame(url, time, label):
@@ -16,17 +16,6 @@ def display_frame(url, time, label):
         label.config(image=tk.PhotoImage(data=cv2.imencode('.png', frame)[1].tobytes()))
     else:
         messagebox.showerror("Error", "Unable to fetch frame.")
-
-
-def download_video(url, save_path):
-    try:
-        filename = os.path.basename(url)
-        full_path = os.path.join(save_path, filename)
-        cmd = f'youtube-dl -f "best" -o "{full_path}" "{url}"'
-        subprocess.call(cmd, shell=True)
-        messagebox.showinfo("Download Complete", "Video has been downloaded successfully.")
-    except Exception as e:
-        messagebox.showerror("Error", f"Error occurred during download: {str(e)}")
 
 
 def save_frame():
@@ -51,7 +40,7 @@ url_entry = tk.Entry(root, font=font_style)
 url_entry.grid(row=0, column=1, padx=10, pady=10)
 
 download_button = tk.Button(root, text="Download Video", font=font_style,
-                            command=lambda: download_video(url_entry.get(), os.getcwd()))
+                            command=lambda: download_video(url_entry.get()))
 download_button.grid(row=0, column=2, padx=10, pady=10)
 
 # Time input for frames (same as before)

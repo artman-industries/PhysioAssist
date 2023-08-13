@@ -8,8 +8,9 @@ dependencies:
   - numpy
 #  - opencv
 #  - pytube
-#  - jupyterlab
+  - youtube-dl
+  - jupyterlab
   - pandas
   - pytorch
   - lightning
-#  - tk
+  - tk
