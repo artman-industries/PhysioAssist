@@ -1,6 +1,6 @@
 from get_database.get_database import get_database
 from get_sampled_frames_from_video.sample_frames_from_video_interval import get_frames_from_video
-from predict_skelaton.model1.predict_skeleton import predict_skeletons
+from predict_skeleton.model1.predict_skeleton import predict_skeletons
 
 
 def get_data_from_db_row(db_row):

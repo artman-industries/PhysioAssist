@@ -6,10 +6,10 @@ dependencies:
 # General:
   - python=3.8
   - numpy
-  - opencv
-  - pytube
-  - jupyterlab
+#  - opencv
+#  - pytube
+#  - jupyterlab
   - pandas
   - pytorch
   - lightning
-  - tk
+#  - tk
