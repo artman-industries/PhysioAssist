@@ -1,4 +1,4 @@
-from get_database import *
+from __database.preprocess_database.get_database import *
 from IPython.display import display
 
 db = get_database()

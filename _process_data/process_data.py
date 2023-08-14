@@ -1,4 +1,4 @@
-from get_database.get_database import get_database
+from __database.preprocess_database.get_database import get_database
 from get_sampled_frames_from_video.sample_frames_from_video_interval import get_frames_from_video
 from predict_skeleton.model1.predict_skeleton import predict_skeletons
 
@@ -16,9 +16,9 @@ def main():
         num_samples = 10  # todo: define it as a script parameter
 
         function_parameters = get_data_from_db_row(db_row) + [num_samples]
-        frames = get_frames_from_video(*function_parameters)
+        frames = get_frames_from_video(*function_parameters)  # todo: get it from the preprocessed database
         skeletons = predict_skeletons(frames)
-        # todo: save the skeletons to the db
+    # todo: save the skeletons to the processed database as np.array
 
 
 if __name__ == '__process_data__':
