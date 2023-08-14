@@ -7,7 +7,6 @@ dependencies:
   - python=3.8
   - numpy
   - opencv
-#  - pytube
   - youtube-dl
   - jupyterlab
   - pandas
@@ -15,3 +14,6 @@ dependencies:
   - lightning
   - tk
   - pillow
+# Process data:
+  - tensorflow
+  - tensorflow-hub

@@ -1,11 +1,7 @@
-import sys
+import tensorflow_hub as hub
+from __global.skeleton import Skeleton
 
-sys.path.append('../../../global/skeleton.py')
-from skeleton import Skeleton
-
-# sys.path.append('../../../global')
-
-model = None  # todo: define the model
+model = hub.load('https://bit.ly/metrabs_l')  # or _s
 
 
 def predict_skeletons(frame_list: list) -> list:
@@ -26,11 +22,11 @@ def predict_skeletons(frame_list: list) -> list:
     # todo:make it as batch calculation
     for frame in frame_list:
         # Process the frame using the model to get predicted skeleton
-        predicted_skeleton = model(frame)
+        preds = model.detect_poses(frame, skeleton='smpl+head_30')
         # todo: need to convert "predicted_skeleton" to match the Skeleton class parameters
-
+        points = preds['poses3d'][0, :, :]  # num_of_points, 3
         # Create a Skeleton object using attributes_array
-        skeleton = Skeleton(*attributes_array)
+        skeleton = None#Skeleton(*attributes_array)
 
         skeletons.append(skeleton)
 
