@@ -7,7 +7,13 @@ from _collect_data.download_video import download_video
 from _collect_data.download_video import get_video_id
 from PIL import Image, ImageTk
 
-current_video_path = None  # r"C:\Users\DJISI\Desktop\technion\simester7\project\PhysioAssist\_collect_data\5dlubcRwYnI.mp4"
+
+class Path:
+    def __init__(self):
+        self.current_video_path = ''  # r"C:\Users\DJISI\Desktop\technion\simester7\project\PhysioAssist\_collect_data\5dlubcRwYnI.mp4"
+
+
+current_video_path = Path()
 
 
 # https://www.youtube.com/watch?v=5dlubcRwYnI
@@ -16,8 +22,8 @@ def download_video_and_save_path(url):
     download_video(url)
     ttt = os.path.join(os.getcwd(), get_video_id(url))
     print(f'{ttt=}')
-    current_video_path = os.path.join(os.getcwd(), get_video_id(url))
-    print(f'{current_video_path=}')
+    current_video_path.current_video_path = os.path.join(os.getcwd(), get_video_id(url)+'.mp4')
+    print(f'{current_video_path.current_video_path=}')
 
 
 def save_frame():
@@ -68,8 +74,8 @@ def display_frames():
     timestamp_1 = float(timestamp_entry.get())
     timestamp_2 = float(timestamp_entry2.get())
 
-    frame_1 = display_frame_at_timestamp(current_video_path, timestamp_1)
-    frame_2 = display_frame_at_timestamp(current_video_path, timestamp_2)
+    frame_1 = display_frame_at_timestamp(current_video_path.current_video_path, timestamp_1)
+    frame_2 = display_frame_at_timestamp(current_video_path.current_video_path, timestamp_2)
 
     if frame_1 is not None and frame_2 is not None:
         img_1 = cv2.cvtColor(frame_1, cv2.COLOR_BGR2RGB)
@@ -108,7 +114,7 @@ def display_frames_sequence(start_time, end_time, num_frames=10):
 
     for i in range(num_frames):
         timestamp = start_time + (i / (num_frames - 1)) * (end_time - start_time)
-        frame = display_frame_at_timestamp(current_video_path, timestamp)
+        frame = display_frame_at_timestamp(current_video_path.current_video_path, timestamp)
 
         if frame is not None:
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -131,5 +137,5 @@ display_sequence_button = tk.Button(root, text="Display Sequence", font=font_sty
                                     command=lambda: display_frames_sequence(float(timestamp_entry.get()),
                                                                             float(timestamp_entry2.get())))
 display_sequence_button.grid(row=2, column=2, padx=10, pady=10)
-
+# todo: add save button
 root.mainloop()
