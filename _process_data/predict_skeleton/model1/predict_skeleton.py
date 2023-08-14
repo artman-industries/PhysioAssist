@@ -2,6 +2,7 @@ import tensorflow_hub as hub
 from __global.skeleton import Skeleton
 
 model = hub.load('https://bit.ly/metrabs_l')  # or _s
+print(model.joint_names)
 
 
 def predict_skeletons(frame_list: list) -> list:
@@ -26,7 +27,7 @@ def predict_skeletons(frame_list: list) -> list:
         # todo: need to convert "predicted_skeleton" to match the Skeleton class parameters
         points = preds['poses3d'][0, :, :]  # num_of_points, 3
         # Create a Skeleton object using attributes_array
-        skeleton = None#Skeleton(*attributes_array)
+        skeleton = None  # Skeleton(*attributes_array)
 
         skeletons.append(skeleton)
 
