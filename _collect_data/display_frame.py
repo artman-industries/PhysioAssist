@@ -4,6 +4,7 @@ import cv2
 def display_frame_at_timestamp(video_path, timestamp):
     try:
         # Open the video file
+        # video_path = video_path.replace('\\\\', '\\')
         cap = cv2.VideoCapture(video_path)
 
         if not cap.isOpened():
@@ -31,7 +32,6 @@ def display_frame_at_timestamp(video_path, timestamp):
         # Release the video capture object and close the display window
         cap.release()
         cv2.destroyAllWindows()
-        print('all is good')
         return frame
 
     except Exception as e:

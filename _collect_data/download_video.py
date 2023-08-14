@@ -3,7 +3,7 @@ import yt_dlp as youtube_dl
 from urllib.parse import urlparse, parse_qs
 
 
-def _get_video_id(youtube_url):
+def get_video_id(youtube_url):
     parsed_url = urlparse(youtube_url)
     query_params = parse_qs(parsed_url.query)
 
@@ -30,7 +30,7 @@ def download_video(url, name=None):
     try:
         # If a custom name is not provided, use the URL as the name
         if name is None:
-            name = _get_video_id(url)
+            name = get_video_id(url)
 
         # Add '.mp4' extension to the name if not already present
         if not name.endswith('.mp4'):
