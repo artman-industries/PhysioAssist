@@ -24,13 +24,15 @@ def display_frame_at_timestamp(video_path, timestamp):
             print("Error: Unable to read frame.")
             return
 
-        # Display the frame
-        cv2.imshow("Frame at Timestamp", frame)
-        cv2.waitKey(0)
+        # # Display the frame
+        # cv2.imshow("Frame at Timestamp", frame)
+        # cv2.waitKey(0)
 
         # Release the video capture object and close the display window
         cap.release()
         cv2.destroyAllWindows()
+        print('all is good')
+        return frame
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
@@ -38,7 +40,8 @@ def display_frame_at_timestamp(video_path, timestamp):
 
 # Example usage
 if __name__ == "__display_frame__":
-    video_path = r"C:\Users\DJISI\Desktop\technion\simester7\project\PhysioAssist\_collect_data\name.mp4"
+    print('__display_frame__')
+    video_path = r"C:\Users\DJISI\Desktop\technion\simester7\project\PhysioAssist\_collect_data\5dlubcRwYnI.mp4"
     timestamp = 10.0  # Example timestamp in seconds
 
     display_frame_at_timestamp(video_path, timestamp)

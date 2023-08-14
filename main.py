@@ -13,6 +13,9 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    current_video_path = 'C:\\Users\\DJISI\\Desktop\\technion\\simester7\\project\\PhysioAssist\\_collect_data\\5dlubcRwYnI.mp4'
+    cleaned_video_path = current_video_path.replace('\\\\', '\\')
+
+    print(cleaned_video_path)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

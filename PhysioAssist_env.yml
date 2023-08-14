@@ -6,7 +6,7 @@ dependencies:
 # General:
   - python=3.8
   - numpy
-#  - opencv
+  - opencv
 #  - pytube
   - youtube-dl
   - jupyterlab
@@ -14,3 +14,4 @@ dependencies:
   - pytorch
   - lightning
   - tk
+  - pillow

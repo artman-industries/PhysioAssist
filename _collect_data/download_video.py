@@ -1,7 +1,20 @@
 import os
 import yt_dlp as youtube_dl
+from urllib.parse import urlparse, parse_qs
 
 
+def _get_video_id(youtube_url):
+    parsed_url = urlparse(youtube_url)
+    query_params = parse_qs(parsed_url.query)
+
+    if 'v' in query_params:
+        video_id = query_params['v'][0]
+        return video_id
+
+    return None
+
+
+# https://www.youtube.com/watch?v=5dlubcRwYnI
 def download_video(url, name=None):
     """
     Download a video from a given URL and save it to the current working directory.
@@ -17,15 +30,15 @@ def download_video(url, name=None):
     try:
         # If a custom name is not provided, use the URL as the name
         if name is None:
-            name = url
+            name = _get_video_id(url)
 
         # Add '.mp4' extension to the name if not already present
         if not name.endswith('.mp4'):
             name += '.mp4'
 
         # Construct the full path to save the video
-        video_path = os.path.join(os.getcwd(), 'name')
-
+        video_path = os.path.join(os.getcwd(), name)
+        print(f'{video_path=}')
         # YouTube-DL options
         ydl_opts = {
             'outtmpl': video_path,  # Set the output file path and name
