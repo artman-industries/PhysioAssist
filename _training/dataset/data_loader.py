@@ -2,7 +2,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from _training.dataset.dataset import SkeletonDataset
 
-# todo: get the skeleton list from the db
+# todo: get the skeleton list from the processed database
 skeleton_list = [np.array([[1, 2, 3], [4, 5, 6], [1, 2, 3]]),
                  np.array([[7, 8, 9], [10, 11, 12], [13, 14, 15]])]
 

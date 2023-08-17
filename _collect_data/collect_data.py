@@ -7,6 +7,15 @@ from _collect_data.download_video import download_video
 from _collect_data.download_video import get_video_id
 from PIL import Image, ImageTk
 
+"""
+for the error:ImportError: 
+"DLL load failed while importing cv2:
+ The specified module could not be found."
+
+pip install opencv-contrib-python
+
+"""
+
 
 class Path:
     def __init__(self):
@@ -22,7 +31,7 @@ def download_video_and_save_path(url):
     download_video(url)
     ttt = os.path.join(os.getcwd(), get_video_id(url))
     print(f'{ttt=}')
-    current_video_path.current_video_path = os.path.join(os.getcwd(), get_video_id(url)+'.mp4')
+    current_video_path.current_video_path = os.path.join(os.getcwd(), get_video_id(url) + '.mp4')
     print(f'{current_video_path.current_video_path=}')
 
 

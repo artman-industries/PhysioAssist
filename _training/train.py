@@ -6,7 +6,7 @@ from _training.dataset.data_loader import train_loader
 num_attributes = 7  # todo: make it dynamic
 # Hyper parameters
 input_size = num_attributes
-hidden_size = num_attributes * 1
+hidden_size = num_attributes * 4
 output_size = num_attributes
 num_layers = 1
 learning_rate = 1e-3
