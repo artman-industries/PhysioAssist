@@ -1,7 +1,7 @@
 from __database.preprocess_database.get_database import get_database
 from get_sampled_frames_from_video.sample_frames_from_video_interval import get_frames_from_video
-from predict_skeleton.model1.predict_skeleton import model1_predict_skeleton
-from predict_skeleton.predict_skeletons import predict_skeletons
+from predict_skeletons.model1.predict_skeleton import model1_predict_skeleton
+from predict_skeletons.predict_skeletons import predict_skeletons
 
 
 def get_data_from_db_row(db_row):
