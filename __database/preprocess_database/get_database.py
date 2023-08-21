@@ -13,20 +13,26 @@ range_name = 'sheet1'
 def randomword(length):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
+
+
 def get_database() -> pd.DataFrame:
     videos_sheet_url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?tqx=out:csv&sheet={range_name}"
     videos_desc_list = pd.read_csv(videos_sheet_url)
     return videos_desc_list
 
+
 def get_firebase_database():
-    cred = credentials.Certificate("C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json")
+    cred = credentials.Certificate(
+        "C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json")
 
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     return db
 
+
 def get_firebase_bucket():
-    cred = credentials.Certificate("C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json")
+    cred = credentials.Certificate(
+        "C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json")
     # this code create random string for unique name of the bucket
 
     bucket_name = randomword(10)
