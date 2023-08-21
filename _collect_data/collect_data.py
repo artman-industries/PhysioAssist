@@ -5,7 +5,9 @@ import cv2
 from _collect_data.display_frame import display_frame_at_timestamp
 from _collect_data.download_video import download_video
 from _collect_data.download_video import get_video_id
+from __database.preprocess_database.get_database import get_firebase_database, get_firebase_bucket
 from PIL import Image, ImageTk
+import io
 
 """
 for the error:ImportError: 
@@ -23,11 +25,22 @@ class Path:
 
 
 current_video_path = Path()
+bucket = get_firebase_bucket()
+db = get_firebase_database()
 
 
 # https://www.youtube.com/watch?v=5dlubcRwYnI
 def download_video_and_save_path(url):
     # todo: if the url is in the database dont download it!!!
+
+    frames_collection = db.collection('frames')
+    docs = frames_collection.stream()
+    for doc in docs:
+        doc_dict = doc.to_dict()
+        if doc_dict['video_url'] == url:
+            print("This url is already in the database")
+            return
+
     download_video(url)
     ttt = os.path.join(os.getcwd(), get_video_id(url))
     print(f'{ttt=}')
@@ -124,12 +137,21 @@ def display_frames_sequence(start_time, end_time, num_frames=10):
     for i in range(num_frames):
         timestamp = start_time + (i / (num_frames - 1)) * (end_time - start_time)
         frame = display_frame_at_timestamp(current_video_path.current_video_path, timestamp)
+        file_name = url_entry.get() + str(timestamp) + '.jpg'
 
         if frame is not None:
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = cv2.resize(img, (320, 240))
             img = Image.fromarray(img)
+            bs = io.BytesIO()
+            img.save(bs, "jpeg")
             img = ImageTk.PhotoImage(image=img)
+            # Save the image to a BytesIO object
+
+            bucket.blob(file_name).upload_from_string(bs.getvalue(), content_type="image/jpeg")  # Upload the frame to the bucket
+            print("Uploaded frame with name {} to bucket", file_name)
+            db.collection("frames").add({"blob_url": bucket.blob(file_name).public_url, "timestamp": timestamp, "video_url": url_entry.get(), "frame_number": i, "num_frames": num_frames})
+
 
             frame_label = tk.Label(frame_sequence)
             frame_label.configure(image=img)

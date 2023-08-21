@@ -28,8 +28,8 @@ cd PysioAssist
 
 ### Activate the Conda environment:
 ```shell
-conda env create -f PysioAssist_env.yaml
-conda activate PysioAssist_env
+conda env create -f PhysioAssist_env.yml
+conda activate PhysioAssist_env
 ```
 
 ## Usage
