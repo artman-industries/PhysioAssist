@@ -6,14 +6,19 @@ dependencies:
 # General:
   - python=3.8
   - numpy
-  - opencv
-  - youtube-dl
   - jupyterlab
   - pandas
   - pytorch
   - lightning
   - tk
   - pillow
+# collect data:
+  - ffmpeg
+  - youtube-dl
 # Process data:
   - tensorflow
   - tensorflow-hub
+  - pip:
+      - yt-dlp
+      - opencv-contrib-python
+      - firebase-admin
