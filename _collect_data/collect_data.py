@@ -10,12 +10,8 @@ from PIL import Image, ImageTk
 import io
 
 """
-for the error:ImportError: 
-"DLL load failed while importing cv2:
- The specified module could not be found."
-
-pip install opencv-contrib-python
-
+https://www.youtube.com/watch?v=xpY7cH5u6zY
+https://www.youtube.com/watch?v=YaXPRqUwItQ
 """
 
 
@@ -33,17 +29,19 @@ db = get_firebase_database()
 def download_video_and_save_path(url):
     # todo: if the url is in the database dont download it!!!
 
-    frames_collection = db.collection('frames')
+    frames_collection = db.collection('reps')
     docs = frames_collection.stream()
-    for doc in docs:
-        doc_dict = doc.to_dict()
-        if doc_dict['video_url'] == url:
-            print("This url is already in the database")
-            return
+    rep_urls = [doc.to_dict()['url'] for doc in docs]
+    if url in rep_urls:
+        print("This url is already in the database")
+        return
+    # for doc in docs:
+    #     doc_dict = doc.to_dict()
+    #     if doc_dict['video_url'] == url:
+    #         print("This url is already in the database")
+    #         return
 
     download_video(url)
-    ttt = os.path.join(os.getcwd(), get_video_id(url))
-    print(f'{ttt=}')
     current_video_path.current_video_path = os.path.join(os.getcwd(), get_video_id(url) + '.mp4')
     print(f'{current_video_path.current_video_path=}')
 
@@ -134,6 +132,12 @@ def display_frames_sequence(start_time, end_time, num_frames=10):
     frame_sequence = tk.Frame(canvas)
     canvas.create_window((0, 0), window=frame_sequence, anchor=tk.NW)
 
+    timestamp_1 = float(timestamp_entry.get())
+    timestamp_2 = float(timestamp_entry2.get())
+    url = url_entry.get()
+    doc_name = f'{url}_{timestamp_1}_{timestamp_2}'.replace("/", "_")
+    db.collection("reps").document(doc_name).set({"url": url, "start": timestamp_1, "end": timestamp_2})
+
     for i in range(num_frames):
         timestamp = start_time + (i / (num_frames - 1)) * (end_time - start_time)
         frame = display_frame_at_timestamp(current_video_path.current_video_path, timestamp)
@@ -141,17 +145,26 @@ def display_frames_sequence(start_time, end_time, num_frames=10):
 
         if frame is not None:
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = cv2.resize(img, (320, 240))
+            # img = cv2.resize(img, (320, 240))
             img = Image.fromarray(img)
             bs = io.BytesIO()
             img.save(bs, "jpeg")
             img = ImageTk.PhotoImage(image=img)
             # Save the image to a BytesIO object
 
-            bucket.blob(file_name).upload_from_string(bs.getvalue(), content_type="image/jpeg")  # Upload the frame to the bucket
-            print("Uploaded frame with name {} to bucket", file_name)
-            db.collection("frames").add({"blob_url": bucket.blob(file_name).public_url, "timestamp": timestamp, "video_url": url_entry.get(), "frame_number": i, "num_frames": num_frames})
+            bucket.blob(file_name).upload_from_string(bs.getvalue(),
+                                                      content_type="image/jpeg")  # Upload the frame to the bucket
+            print(f"Uploaded frame with name {file_name} to bucket")
 
+            db.collection("reps").document(doc_name).collection("frames").add(
+                {"blob_url": bucket.blob(file_name).public_url, "timestamp": timestamp, "video_url": url,
+                 "frame_number": i, "num_frames": num_frames}
+            )
+            # db.collection("reps").Add(
+            #     {"url": url, "start": float(timestamp_entry.get()), "end": float(timestamp_entry2.get())})
+            # db.collection("reps").add(
+            #     {"blob_url": bucket.blob(file_name).public_url, "timestamp": timestamp, "video_url": url_entry.get(),
+            #      "frame_number": i, "num_frames": num_frames})
 
             frame_label = tk.Label(frame_sequence)
             frame_label.configure(image=img)
@@ -164,7 +177,7 @@ def display_frames_sequence(start_time, end_time, num_frames=10):
 
 
 # Button to display frames
-display_sequence_button = tk.Button(root, text="Display Sequence", font=font_style,
+display_sequence_button = tk.Button(root, text="Display Sequence & Save", font=font_style,
                                     command=lambda: display_frames_sequence(float(timestamp_entry.get()),
                                                                             float(timestamp_entry2.get())))
 display_sequence_button.grid(row=2, column=2, padx=10, pady=10)

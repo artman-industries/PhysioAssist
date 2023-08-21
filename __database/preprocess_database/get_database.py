@@ -9,6 +9,10 @@ import string
 spreadsheet_id = '1KubCg5KQWX-JBghAJHWcc-jVf7lVNfuccFohX5TRa1k'
 range_name = 'sheet1'
 
+cred_path = r'C:\Users\DJISI\Desktop\technion\simester7\project\PhysioAssist\physioassistent-firebase-adminsdk-fae3q-8648769f21.json'
+
+
+# "C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json"
 
 def randomword(length):
     letters = string.ascii_lowercase
@@ -22,17 +26,18 @@ def get_database() -> pd.DataFrame:
 
 
 def get_firebase_database():
-    cred = credentials.Certificate(
-        "C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json")
+    cred = credentials.Certificate(cred_path)
 
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     return db
 
 
+
+
+
 def get_firebase_bucket():
-    cred = credentials.Certificate(
-        "C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json")
+    cred = credentials.Certificate(cred_path)
     # this code create random string for unique name of the bucket
 
     bucket_name = randomword(10)
