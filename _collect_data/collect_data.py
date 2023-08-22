@@ -2,16 +2,15 @@ import os
 import tkinter as tk
 import cv2
 
+from __global.utils import get_video_id_from_url
 from _collect_data.display_frame import display_frame_at_timestamp
 from _collect_data.download_video import download_video
-from _collect_data.download_video import get_video_id
 from __database.preprocess_database.get_database import get_firebase_database, get_firebase_bucket
 from PIL import Image, ImageTk
 import io
 
 """
-https://www.youtube.com/watch?v=xpY7cH5u6zY
-https://www.youtube.com/watch?v=YaXPRqUwItQ
+https://www.youtube.com/watch?v=xqvCmoLULNY
 """
 
 
@@ -42,7 +41,7 @@ def download_video_and_save_path(url):
     #         return
 
     download_video(url)
-    current_video_path.current_video_path = os.path.join(os.getcwd(), get_video_id(url) + '.mp4')
+    current_video_path.current_video_path = os.path.join(os.getcwd(), get_video_id_from_url(url) + '.mp4')
     print(f'{current_video_path.current_video_path=}')
 
 
@@ -135,13 +134,14 @@ def display_frames_sequence(start_time, end_time, num_frames=25):
     timestamp_1 = float(timestamp_entry.get())
     timestamp_2 = float(timestamp_entry2.get())
     url = url_entry.get()
-    doc_name = f'{url}_{timestamp_1}_{timestamp_2}'.replace("/", "_")
+    video_id = get_video_id_from_url(url_entry.get())
+    doc_name = f'{video_id}_{timestamp_1}_{timestamp_2}'
     db.collection("reps").document(doc_name).set({"url": url, "start": timestamp_1, "end": timestamp_2})
 
     for i in range(num_frames):
         timestamp = start_time + (i / (num_frames - 1)) * (end_time - start_time)
         frame = display_frame_at_timestamp(current_video_path.current_video_path, timestamp)
-        file_name = url_entry.get() + str(timestamp) + '.jpg'
+        file_name = video_id + '_' + str(timestamp) + '.jpg'
 
         if frame is not None:
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -157,7 +157,9 @@ def display_frames_sequence(start_time, end_time, num_frames=25):
             print(f"Uploaded frame with name {file_name} to bucket")
 
             db.collection("reps").document(doc_name).collection("frames").add(
-                {"blob_url": bucket.blob(file_name).public_url, "timestamp": timestamp, "video_url": url,
+                {"blob_url": bucket.blob(file_name).public_url,
+                 "blob_name": file_name,
+                 "timestamp": timestamp, "video_url": url,
                  "frame_number": i, "num_frames": num_frames}
             )
             # db.collection("reps").Add(
