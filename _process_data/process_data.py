@@ -14,9 +14,9 @@ def main():
     reps = download_db(db, bucket)
     for rep in reps:
         frame_paths = [frame_path for _, frame_path in rep.images]
-        frames = [np.array(Image.open(frame_path)) for frame_path in frame_paths]
+        # frames = [np.array(Image.open(frame_path)) for frame_path in frame_paths]
         # TODO: make model1_predict_skeleton as a script parameter
-        skeletons = predict_skeletons(frames, model1_predict_skeleton)
+        skeletons = predict_skeletons(frame_paths, model1_predict_skeleton)
         # todo: save the skeletons to the processed database as np.array
     print(reps)
 
