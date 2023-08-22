@@ -29,8 +29,8 @@ db = get_firebase_database()
 def download_video_and_save_path(url):
     # todo: if the url is in the database dont download it!!!
 
-    frames_collection = db.collection('reps')
-    docs = frames_collection.stream()
+    reps_collection = db.collection('reps')
+    docs = reps_collection.stream()
     rep_urls = [doc.to_dict()['url'] for doc in docs]
     if url in rep_urls:
         print("This url is already in the database")
@@ -117,7 +117,7 @@ display_button = tk.Button(root, text="Display Frames", font=font_style, command
 display_button.grid(row=1, column=2, padx=10, pady=10)
 
 
-def display_frames_sequence(start_time, end_time, num_frames=10):
+def display_frames_sequence(start_time, end_time, num_frames=25):
     sequence_window = tk.Toplevel(root)
     sequence_window.title("Frame Sequence Display")
 

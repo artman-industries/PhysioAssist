@@ -14,7 +14,7 @@ cred_path = r'C:\Users\DJISI\Desktop\technion\simester7\project\PhysioAssist\phy
 
 # "C:/Users/Alon/Documents/Studies/Spring 2023/Project in Artificial Intellijence/PhysiAssist/physioassistent-firebase-adminsdk-fae3q-8648769f21.json"
 
-def randomword(length):
+def random_word(length):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
@@ -33,14 +33,11 @@ def get_firebase_database():
     return db
 
 
-
-
-
 def get_firebase_bucket():
     cred = credentials.Certificate(cred_path)
     # this code create random string for unique name of the bucket
 
-    bucket_name = randomword(10)
+    bucket_name = random_word(10)
     bucket_app = firebase_admin.initialize_app(cred, {
         'storageBucket': 'physioassistent.appspot.com'
     }, name=bucket_name)
