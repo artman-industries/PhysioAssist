@@ -60,7 +60,7 @@ class DatabaseAPI:
         cred = credentials.Certificate(self.cred_path)
         bucket_name = self.random_word(10)
         bucket_app = firebase_admin.initialize_app(cred, {
-            'storageBucket': 'your-app-id.appspot.com'  # Replace with your storage bucket URL
+            'storageBucket': 'physioassistent.appspot.com'  # Replace with your storage bucket URL
         }, name=bucket_name)
         bucket = storage.bucket(app=bucket_app)
         return bucket
