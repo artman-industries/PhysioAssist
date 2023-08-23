@@ -14,6 +14,9 @@ dependencies:
   - lightning
   - tk
   - pillow
+  - transforms3d
+  - mayavi
+  - imageio
 # Process data:
   - tensorflow
   - tensorflow-hub
