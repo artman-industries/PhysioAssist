@@ -8,6 +8,7 @@ from _collect_data.download_video import download_video
 from __database.preprocess_database.get_database import get_firebase_database, get_firebase_bucket
 from PIL import Image, ImageTk
 import io
+from __database.preprocess_database.database_api import DatabaseAPI
 
 """
 https://www.youtube.com/watch?v=xqvCmoLULNY
@@ -20,17 +21,20 @@ class Path:
 
 
 current_video_path = Path()
-bucket = get_firebase_bucket()
-db = get_firebase_database()
+# bucket = get_firebase_bucket()
+# db = get_firebase_database()
+
+database_api = DatabaseAPI(None)
 
 
 # https://www.youtube.com/watch?v=5dlubcRwYnI
 def download_video_and_save_path(url):
     # todo: if the url is in the database dont download it!!!
 
-    reps_collection = db.collection('reps')
-    docs = reps_collection.stream()
-    rep_urls = [doc.to_dict()['url'] for doc in docs]
+    # reps_collection = db.collection('reps')
+    # docs = reps_collection.stream()
+    # rep_urls = [doc.to_dict()['url'] for doc in docs]
+    rep_urls = [rep['url'] for rep in database_api.get_reps()]
     if url in rep_urls:
         print("This url is already in the database")
         return
@@ -136,8 +140,8 @@ def display_frames_sequence(start_time, end_time, num_frames=25):
     url = url_entry.get()
     video_id = get_video_id_from_url(url_entry.get())
     doc_name = f'{video_id}_{timestamp_1}_{timestamp_2}'
-    db.collection("reps").document(doc_name).set({"url": url, "start": timestamp_1, "end": timestamp_2})
-
+    # db.collection("reps").document(doc_name).set({"url": url, "start": timestamp_1, "end": timestamp_2})
+    database_api.add_rep(doc_name, url, timestamp_1, timestamp_2)
     for i in range(num_frames):
         timestamp = start_time + (i / (num_frames - 1)) * (end_time - start_time)
         frame = display_frame_at_timestamp(current_video_path.current_video_path, timestamp)
@@ -152,16 +156,18 @@ def display_frames_sequence(start_time, end_time, num_frames=25):
             img = ImageTk.PhotoImage(image=img)
             # Save the image to a BytesIO object
 
-            bucket.blob(file_name).upload_from_string(bs.getvalue(),
-                                                      content_type="image/jpeg")  # Upload the frame to the bucket
-            print(f"Uploaded frame with name {file_name} to bucket")
+            database_api.upload_frame_to_rep(file_name, doc_name, bs.getvalue(), timestamp, i)
+            # bucket.blob(file_name).upload_from_string(bs.getvalue(),
+            #                                           content_type="image/jpeg")  # Upload the frame to the bucket
+            # print(f"Uploaded frame with name {file_name} to bucket")
+            #
+            # db.collection("reps").document(doc_name).collection("frames").add(
+            #     {"blob_url": bucket.blob(file_name).public_url,
+            #      "blob_name": file_name,
+            #      "timestamp": timestamp, "video_url": url,
+            #      "frame_number": i, "num_frames": num_frames}
+            # )
 
-            db.collection("reps").document(doc_name).collection("frames").add(
-                {"blob_url": bucket.blob(file_name).public_url,
-                 "blob_name": file_name,
-                 "timestamp": timestamp, "video_url": url,
-                 "frame_number": i, "num_frames": num_frames}
-            )
             # db.collection("reps").Add(
             #     {"url": url, "start": float(timestamp_entry.get()), "end": float(timestamp_entry2.get())})
             # db.collection("reps").add(
