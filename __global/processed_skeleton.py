@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
 import math
-from skeleton import Skeleton
+from __global.skeleton import Skeleton
 
 
 class AngleUnit(Enum):

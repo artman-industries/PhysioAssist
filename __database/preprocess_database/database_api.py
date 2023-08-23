@@ -6,6 +6,7 @@ import string
 import random
 
 from __global.rep_object import RepObject
+from __global.skeleton import Skeleton
 
 
 class DatabaseAPI:
@@ -110,9 +111,9 @@ class DatabaseAPI:
         return destination_file_name
 
     def download_reps(self, db_folder_name='db'):
+        os.mkdir(db_folder_name)
         reps_collection = self.db.collection('reps')
         rep_docs = reps_collection.stream()
-        os.mkdir(db_folder_name)
         reps = []
         for rep_doc in rep_docs:
             rep_id = rep_doc.id  # Using rep_doc's ID as the folder name
@@ -129,3 +130,22 @@ class DatabaseAPI:
                     rep.add_frame(frame_number, destination_file_name)
             reps.append(rep)
         return reps
+
+    def save_skeleton(self, rep_id, model_name, frame_number, skeleton_dict):
+        rep_ref = self.db.collection("reps").document(rep_id)
+        rep_ref.collection("skeletons").document(model_name).set({"name": model_name})  # todo: add more data
+        model_ref = rep_ref.collection("skeletons").document(model_name)
+        model_ref.collection('skeletons').document(str(frame_number)).set(skeleton_dict)
+
+    def get_skeletons(self, rep_id, model_name):
+        rep_ref = self.db.collection("reps").document(rep_id)
+        model_collection = rep_ref.collection("skeletons").document(model_name).collection("skeletons")
+        docs = model_collection.stream()
+        skeletons = [Skeleton.from_dict(doc.to_dict()) for doc in docs]
+        return skeletons
+
+    def get_rep_ids(self):
+        reps_collection = self.db.collection('reps')
+        docs = reps_collection.stream()
+        rep_ids = [doc.id for doc in docs]
+        return rep_ids
