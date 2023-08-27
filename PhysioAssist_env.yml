@@ -6,12 +6,12 @@ dependencies:
 # General:
   - python=3.8
   - numpy
-  - jupyterlab
+  - jupyterlab #conda install -c conda-forge jupyterlab
   - pandas
   - pytorch
   - lightning
   - tk
-  - pillow
+  - pillow=9.0
 # collect data:
   - ffmpeg
   - youtube-dl
