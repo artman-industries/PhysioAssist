@@ -110,36 +110,72 @@ class DatabaseAPI:
         blob.download_to_filename(destination_file_name)
         return destination_file_name
 
-    def download_reps(self, db_folder_name='db'):
-        os.mkdir(db_folder_name)
+    def download_reps(self, model_name, db_folder_name='db'):
+        if not os.path.exists(db_folder_name):
+            os.mkdir(db_folder_name)
         reps_collection = self.db.collection('reps')
         rep_docs = reps_collection.stream()
         reps = []
         for rep_doc in rep_docs:
+            print(f'\nstarting with repetition {rep_doc.id}:')
+
+            """
+            don't download rep if model_name is already in the database
+            """
+
+            applied_models_collection = None
+            for collection in rep_doc.reference.collections():
+                if collection.id == 'applied_models':
+                    applied_models_collection = collection
+
+            if applied_models_collection is not None:
+                doc_ref = applied_models_collection.document(model_name)
+                model_doc = doc_ref.get()
+                if model_doc.exists:
+                    print(f'{model_name} is already applied on this repetition.')
+                    continue
+
+            """
+            download reps
+            """
+
             rep_id = rep_doc.id  # Using rep_doc's ID as the folder name
             rep_folder_name = os.path.join(db_folder_name, rep_id)
-            os.mkdir(rep_folder_name)
+
+            if not os.path.exists(rep_folder_name):
+                os.mkdir(rep_folder_name)
+            else:
+                print('this repetition is already downloaded')
+                # todo: add it to the reps list
+                break
+
             rep_folder = os.path.join(os.path.join(os.getcwd(), db_folder_name), rep_id)
             rep = RepObject(rep_id)
-            for collection_ref in rep_doc.reference.collections():
-                frame_docs = collection_ref.stream()
-                for frame_doc in frame_docs:
-                    blob_name = frame_doc.to_dict()['blob_name']
-                    frame_number = frame_doc.to_dict()['frame_number']
-                    destination_file_name = self.download_image_from_blob(self.bucket, blob_name, rep_folder)
-                    rep.add_frame(frame_number, destination_file_name)
+
+            frames_collection = None
+            for collection in rep_doc.reference.collections():
+                print(f'{collection.id=}')
+                if collection.id == 'frames':
+                    frames_collection = collection
+
+            frame_docs = frames_collection.stream()
+            for frame_doc in frame_docs:
+                blob_name = frame_doc.to_dict()['blob_name']
+                frame_number = frame_doc.to_dict()['frame_number']
+                destination_file_name = self.download_image_from_blob(self.bucket, blob_name, rep_folder)
+                rep.add_frame(frame_number, destination_file_name)
             reps.append(rep)
         return reps
 
     def save_skeleton(self, rep_id, model_name, frame_number, skeleton_dict):
         rep_ref = self.db.collection("reps").document(rep_id)
-        rep_ref.collection("skeletons").document(model_name).set({"name": model_name})  # todo: add more data
-        model_ref = rep_ref.collection("skeletons").document(model_name)
+        rep_ref.collection("applied_models").document(model_name).set({"name": model_name})  # todo: add more data
+        model_ref = rep_ref.collection("applied_models").document(model_name)
         model_ref.collection('skeletons').document(str(frame_number)).set(skeleton_dict)
 
     def get_skeletons(self, rep_id, model_name):
         rep_ref = self.db.collection("reps").document(rep_id)
-        model_collection = rep_ref.collection("skeletons").document(model_name).collection("skeletons")
+        model_collection = rep_ref.collection("applied_models").document(model_name).collection("skeletons")
         docs = model_collection.stream()
         skeletons = [Skeleton.from_dict(doc.to_dict()) for doc in docs]
         return skeletons

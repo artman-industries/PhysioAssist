@@ -15,7 +15,7 @@ def main():
     # db = get_firebase_database()
     # reps = download_db(db, bucket)
     database_api = DatabaseAPI(None)
-    reps = database_api.download_reps()
+    reps = database_api.download_reps('model1')
     for rep in reps:
         frame_paths = [frame_path for _, frame_path in rep.images]
         frame_ids = [frame_id for frame_id, _ in rep.images]
