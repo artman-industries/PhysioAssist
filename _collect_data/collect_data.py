@@ -74,6 +74,13 @@ download_button = tk.Button(root, text="Download Video", font=font_style,
                             command=lambda: download_video_and_save_path(url_entry.get()))
 download_button.grid(row=0, column=2, padx=10, pady=10)
 
+# video angle
+video_angle_label = tk.Label(root, text="Enter video angle:", font=font_style, bg=bg_color)
+video_angle_label.grid(row=3, column=0, padx=10, pady=10)
+
+video_angle__entry = tk.Entry(root, font=font_style)
+video_angle__entry.grid(row=3, column=1, padx=10, pady=10)
+
 # Timestamp input and display button
 timestamp_label = tk.Label(root, text="Enter Timestamp:", font=font_style, bg=bg_color)
 timestamp_label.grid(row=1, column=0, padx=10, pady=10)
@@ -90,7 +97,7 @@ timestamp_entry2.grid(row=2, column=1, padx=10, pady=10)
 
 # Create a label to display frames
 frame_label = tk.Label(root)
-frame_label.grid(row=3, columnspan=3, padx=10, pady=10)
+frame_label.grid(row=4, columnspan=3, padx=10, pady=10)
 
 
 def display_frames():
@@ -138,10 +145,11 @@ def display_frames_sequence(start_time, end_time, num_frames=25):
     timestamp_1 = float(timestamp_entry.get())
     timestamp_2 = float(timestamp_entry2.get())
     url = url_entry.get()
+    video_angle = int(video_angle__entry.get())
     video_id = get_video_id_from_url(url_entry.get())
     doc_name = f'{video_id}_{timestamp_1}_{timestamp_2}'
     # db.collection("reps").document(doc_name).set({"url": url, "start": timestamp_1, "end": timestamp_2})
-    database_api.add_rep(doc_name, url, timestamp_1, timestamp_2)
+    database_api.add_rep(doc_name, url, timestamp_1, timestamp_2, video_angle)
     for i in range(num_frames):
         timestamp = start_time + (i / (num_frames - 1)) * (end_time - start_time)
         frame = display_frame_at_timestamp(current_video_path.current_video_path, timestamp)

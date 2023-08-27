@@ -86,8 +86,8 @@ class DatabaseAPI:
         rep_dicts = [doc.to_dict() for doc in docs]
         return rep_dicts
 
-    def add_rep(self, doc_name, url, start, end):
-        self.db.collection("reps").document(doc_name).set({"url": url, "start": start, "end": end})
+    def add_rep(self, doc_name, url, start, end, video_angle):
+        self.db.collection("reps").document(doc_name).set({"url": url, "start": start, "end": end, 'video_angle':video_angle})
 
     def upload_frame_to_rep(self, file_name, rep_name, file, timestamp, frame_number):
         self.bucket.blob(file_name).upload_from_string(file,
