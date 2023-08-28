@@ -15,6 +15,9 @@ dependencies:
 # collect data:
   - ffmpeg
   - youtube-dl
+  - transforms3d
+  - mayavi
+  - imageio
 # Process data:
   - tensorflow
   - tensorflow-hub

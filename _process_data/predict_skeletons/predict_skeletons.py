@@ -10,15 +10,15 @@ def predict_skeletons(frame_list: list, activate_model_function) -> list:
     Returns:
         list: A list of Skeleton objects.
     """
-    skeletons = []
+    skeletons = [activate_model_function(frame) for frame in frame_list]
     ##############################
     # Note: it will be different #
     ##############################
     # todo:make it as batch calculation
-    for frame in frame_list:
+    # for frame in frame_list:
         # Process the frame using the model to get predicted skeleton
-        skeleton = activate_model_function(frame)
+        # skeleton = activate_model_function(frame)
 
-        skeletons.append(skeleton)
+        # skeletons.append(skeleton)
 
     return skeletons
