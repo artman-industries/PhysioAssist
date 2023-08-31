@@ -27,10 +27,10 @@ num_attributes = 7
 # Generate the dataset
 dataset = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # .astype(float)
 
-train_dataset = SkeletonDataset(dataset)
+train_dataset = SkeletonDataset(reps)
 train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
 
-if __name__ == 'view_dataset':
+if __name__ == '__main__':
     for inputs, targets in train_loader:
         print(f"Input Sequence shape:", inputs.shape)
         print("Input Sequence:", inputs)
