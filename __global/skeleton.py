@@ -51,7 +51,7 @@ class Skeleton:
             # left_knee: np.ndarray,
             # right_ankle: np.ndarray,
             # left_ankle: np.ndarray,
-            data = None
+            data=None
     ):
         """
         Initializes a Skeleton instance.
@@ -101,7 +101,8 @@ class Skeleton:
         self.left_ear = left_ear
         self.right_eye = right_eye
         self.right_ear = right_ear
-        self.data = data
+
+        # self.data = data #todo: add it
         # self.right_shoulder = right_shoulder
         # self.left_shoulder = left_shoulder
         # self.right_elbow = right_elbow
@@ -182,6 +183,7 @@ class Skeleton:
         Returns:
             Skeleton: The created Skeleton instance.
         """
+        # todo complete it
         return cls(
             right_shoulder=np.array(data_dict['right_shoulder']),
             left_shoulder=np.array(data_dict['left_shoulder']),
@@ -231,7 +233,6 @@ class Skeleton:
                 attributes.append(attr_value)
 
         return np.array(attributes)
-
 
 # rs = np.array([1, 2])
 # ls = np.array([3, 2])

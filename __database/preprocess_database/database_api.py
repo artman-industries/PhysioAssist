@@ -169,7 +169,7 @@ class DatabaseAPI:
 
     def save_skeleton(self, rep_id, model_name, frame_number, skeleton_dict):
         rep_ref = self.db.collection("reps").document(rep_id)
-        rep_ref.collection("applied_models").document(model_name).set({"name": model_name})  # todo: add more data
+        rep_ref.collection("applied_models").document(model_name).set({"name": model_name})  # todo: add more data about the model
         model_ref = rep_ref.collection("applied_models").document(model_name)
         model_ref.collection('skeletons').document(str(frame_number)).set(skeleton_dict)
 
