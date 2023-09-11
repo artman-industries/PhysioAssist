@@ -8,13 +8,11 @@ from __global.processed_skeleton import ProcessedSkeleton
 database_api = DatabaseAPI(None)
 reps = []
 for rep_id in database_api.get_rep_ids():
-    skeleton_list = database_api.get_skeletons(rep_id, model_name='model1')
+    skeleton_list = database_api.get_skeletons(rep_id, model_name='model1')  # todo: change the model_name
     processed_skeleton_list = [ProcessedSkeleton(skeleton) for skeleton in skeleton_list]
     rep = np.array([processed_skeleton.to_numpy_array() for processed_skeleton in processed_skeleton_list])
     reps.append(rep)
 reps = np.array(reps)
-# [np.array([[1, 2, 3], [4, 5, 6], [1, 2, 3]]),
-#              np.array([[7, 8, 9], [10, 11, 12], [13, 14, 15]])]
 
 # Set a random seed for reproducibility
 np.random.seed(42)
@@ -24,25 +22,42 @@ num_reps = 50
 num_time_stamps = 10
 num_attributes = 7
 
-# # Generate the dataset
-# dataset = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # .astype(float)
-
-dataset = SkeletonDataset(reps)
+# Generate the dataset
+reps = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # todo: remove it
 
 # Define the ratio for splitting the dataset (e.g., 80% train, 20% test)
 train_ratio = 0.8
 test_ratio = 1 - train_ratio
 
 # Calculate the sizes of the train and test splits
-train_size = int(train_ratio * len(dataset))
-test_size = len(dataset) - train_size
+train_size = int(train_ratio * len(reps))
+test_size = len(reps) - train_size
 
-# Use random_split to split the dataset into train and test sets
-train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+# Split the dataset into train and test sets using NumPy
+train_data = reps[:train_size]
+test_data = reps[train_size:]
+
+# Create train and test SkeletonDataset
+train_dataset = SkeletonDataset(train_data)
+test_dataset = SkeletonDataset(test_data)
 
 # Create DataLoader instances for the train and test datasets
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+batch_size = 2
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+# # Use random_split to split the dataset into train and test sets
+# train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+#
+# # Create DataLoader instances for the train and test datasets
+# train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
+# test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+
+
+
+# train_dataset = SkeletonDataset(dataset)
+# train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
+
 if __name__ == '__main__':
     for inputs, targets in train_loader:
         print(f"Input Sequence shape:", inputs.shape)
@@ -50,3 +65,10 @@ if __name__ == '__main__':
         print("Target Sequence shape:", targets.shape)
         print("Target Sequence:", targets)
         break  # Print only the first batch
+
+    for inputs, targets in test_loader:
+        print(f"Input Sequence shape:", inputs.shape)
+        print("Input Sequence:", inputs)
+        print("Target Sequence shape:", targets.shape)
+        print("Target Sequence:", targets)
+        break
