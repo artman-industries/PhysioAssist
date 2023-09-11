@@ -1,5 +1,5 @@
 import numpy as np
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 from _training.dataset.dataset import SkeletonDataset
 from __database.preprocess_database.database_api import DatabaseAPI
 from __global.processed_skeleton import ProcessedSkeleton
@@ -24,12 +24,25 @@ num_reps = 50
 num_time_stamps = 10
 num_attributes = 7
 
-# Generate the dataset
-dataset = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # .astype(float)
+# # Generate the dataset
+# dataset = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # .astype(float)
 
-train_dataset = SkeletonDataset(reps)
+dataset = SkeletonDataset(reps)
+
+# Define the ratio for splitting the dataset (e.g., 80% train, 20% test)
+train_ratio = 0.8
+test_ratio = 1 - train_ratio
+
+# Calculate the sizes of the train and test splits
+train_size = int(train_ratio * len(dataset))
+test_size = len(dataset) - train_size
+
+# Use random_split to split the dataset into train and test sets
+train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+
+# Create DataLoader instances for the train and test datasets
 train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
-
+test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 if __name__ == '__main__':
     for inputs, targets in train_loader:
         print(f"Input Sequence shape:", inputs.shape)
