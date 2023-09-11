@@ -15,7 +15,8 @@ def main():
     # db = get_firebase_database()
     # reps = download_db(db, bucket)
     database_api = DatabaseAPI(None)
-    reps = database_api.download_reps('model1')  # todo: change the name
+    model_name = 'model1'  # todo: change the name
+    reps = database_api.download_reps(model_name)
     for rep in reps:
         frame_paths = [frame_path for _, frame_path in rep.images]
         frame_ids = [frame_id for frame_id, _ in rep.images]
@@ -34,7 +35,7 @@ def main():
 
         # todo: save the skeletons to the processed database as np.array
         for skeleton, frame_id in zip(skeletons, frame_ids):
-            database_api.save_skeleton(rep.rep_id, 'model1', frame_id, skeleton.to_dict())
+            database_api.save_skeleton(rep.rep_id, model_name, frame_id, skeleton.to_dict())
 
 
 # if __name__ == '__process_data__':
