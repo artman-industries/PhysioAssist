@@ -23,7 +23,7 @@ num_time_stamps = 10
 num_attributes = 7
 
 # Generate the dataset
-reps = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # todo: remove it
+reps = np.random.rand(num_reps, num_time_stamps, num_attributes) * 100  # todo: remove it when the dataset is ready in the db
 
 # Define the ratio for splitting the dataset (e.g., 80% train, 20% test)
 train_ratio = 0.8
