@@ -24,17 +24,26 @@ class ProcessedSkeleton:
 
         """
         self.unit = unit
-
-        self.right_knee_angle = self.calculate_angle(skeleton.right_hip, skeleton.right_knee, skeleton.right_ankle)
-        self.left_knee_angle = self.calculate_angle(skeleton.left_hip, skeleton.left_knee, skeleton.left_ankle)
-        self.left_side_body_angle = self.calculate_angle(skeleton.left_shoulder, skeleton.left_hip,
-                                                         skeleton.left_knee)
-        self.right_side_body_angle = self.calculate_angle(skeleton.right_shoulder, skeleton.right_hip,
-                                                          skeleton.right_knee)
-        self.ankle_distance = self.calculate_distance(skeleton.left_ankle, skeleton.right_ankle)
-        self.knee_distance = self.calculate_distance(skeleton.left_knee, skeleton.right_knee)
-        self.hip_angle = self.calculate_hip_ankle_angle(skeleton.right_hip, skeleton.left_hip, skeleton.right_ankle,
-                                                        skeleton.left_ankle)
+        if skeleton is None:
+            # Initialize attributes to default values
+            self.right_knee_angle = 0.0
+            self.left_knee_angle = 0.0
+            self.left_side_body_angle = 0.0
+            self.right_side_body_angle = 0.0
+            self.ankle_distance = 0.0
+            self.knee_distance = 0.0
+            self.hip_angle = 0.0
+        else:
+            self.right_knee_angle = self.calculate_angle(skeleton.right_hip, skeleton.right_knee, skeleton.right_ankle)
+            self.left_knee_angle = self.calculate_angle(skeleton.left_hip, skeleton.left_knee, skeleton.left_ankle)
+            self.left_side_body_angle = self.calculate_angle(skeleton.left_shoulder, skeleton.left_hip,
+                                                             skeleton.left_knee)
+            self.right_side_body_angle = self.calculate_angle(skeleton.right_shoulder, skeleton.right_hip,
+                                                              skeleton.right_knee)
+            self.ankle_distance = self.calculate_distance(skeleton.left_ankle, skeleton.right_ankle)
+            self.knee_distance = self.calculate_distance(skeleton.left_knee, skeleton.right_knee)
+            self.hip_angle = self.calculate_hip_ankle_angle(skeleton.right_hip, skeleton.left_hip, skeleton.right_ankle,
+                                                            skeleton.left_ankle)
 
     def calculate_distance(self, point1: np.ndarray, point2: np.ndarray) -> float:
         """
@@ -140,3 +149,25 @@ class ProcessedSkeleton:
         ]
 
         return np.array(attributes)
+
+    @classmethod
+    def from_numpy_array(cls, np_array: np.ndarray, unit=AngleUnit.DEGREES):
+        """
+        Create a ProcessedSkeleton instance from a 1D NumPy array.
+
+        Args:
+            np_array (np.ndarray): The 1D NumPy array containing attribute values.
+            unit (AngleUnit, optional): The unit of the angle representation. Defaults to AngleUnit.DEGREES.
+        Returns:
+            ProcessedSkeleton: A new ProcessedSkeleton instance initialized with the values from the array.
+        """
+        instance = cls(None, unit)
+        instance.right_knee_angle, \
+        instance.left_knee_angle, \
+        instance.left_side_body_angle, \
+        instance.right_side_body_angle, \
+        instance.ankle_distance, \
+        instance.knee_distance, \
+        instance.hip_angle = np_array
+
+        return instance
