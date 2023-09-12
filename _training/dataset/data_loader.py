@@ -12,7 +12,7 @@ for rep_id in database_api.get_rep_ids():
     processed_skeleton_list = [ProcessedSkeleton(skeleton) for skeleton in skeleton_list]
     rep = np.array([processed_skeleton.to_numpy_array() for processed_skeleton in processed_skeleton_list])
     reps.append(rep)
-    # break
+    break
 reps = np.array(reps)
 
 # Set a random seed for reproducibility

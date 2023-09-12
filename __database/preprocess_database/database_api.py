@@ -177,7 +177,8 @@ class DatabaseAPI:
         rep_ref = self.db.collection("reps").document(rep_id)
         model_collection = rep_ref.collection("applied_models").document(model_name).collection("skeletons")
         docs = model_collection.stream()
-        skeletons = [Skeleton.from_dict(doc.to_dict()) for doc in docs]
+        sorted_docs = sorted(docs, key=lambda doc: int(doc.id))
+        skeletons = [Skeleton.from_dict(doc.to_dict()) for doc in sorted_docs]
         return skeletons
 
     def get_rep_ids(self):
