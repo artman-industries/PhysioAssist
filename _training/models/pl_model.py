@@ -75,3 +75,20 @@ class PLModel(pl.LightningModule):
         loss = self.loss_fn(outputs, targets)
         self.log('train_loss', loss)
         return loss
+
+    def test_step(self, batch, batch_idx):
+        """
+        Test step for a single batch of data.
+
+        Args:
+            batch (tuple): Tuple containing input and target tensors.
+            batch_idx (int): Index of the batch.
+
+        Returns:
+            torch.Tensor: The computed loss for the batch during testing.
+        """
+        inputs, targets = batch
+        outputs = self(inputs)
+        loss = self.loss_fn(outputs, targets)
+        self.log('test_loss', loss)
+        return loss

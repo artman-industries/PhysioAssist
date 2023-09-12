@@ -7,12 +7,12 @@ from __global.processed_skeleton import ProcessedSkeleton
 # todo: get the skeleton list from the processed database
 database_api = DatabaseAPI(None)
 reps = []
-for rep_id in database_api.get_rep_ids():
-    skeleton_list = database_api.get_skeletons(rep_id, model_name='model1')  # todo: change the model_name
-    processed_skeleton_list = [ProcessedSkeleton(skeleton) for skeleton in skeleton_list]
-    rep = np.array([processed_skeleton.to_numpy_array() for processed_skeleton in processed_skeleton_list])
-    reps.append(rep)
-reps = np.array(reps)
+# for rep_id in database_api.get_rep_ids():
+#     skeleton_list = database_api.get_skeletons(rep_id, model_name='model1')  # todo: change the model_name
+#     processed_skeleton_list = [ProcessedSkeleton(skeleton) for skeleton in skeleton_list]
+#     rep = np.array([processed_skeleton.to_numpy_array() for processed_skeleton in processed_skeleton_list])
+#     reps.append(rep)
+# reps = np.array(reps)
 
 # Set a random seed for reproducibility
 np.random.seed(42)
