@@ -1,6 +1,6 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-
+from _training.dataset.data_loader import train_loader
 
 def create_column_graphs(data, headers=None, graph_height=300, graph_width=400, padding=10, line_color=(0, 0, 255),
                          bg_color=(255, 255, 255)):
@@ -90,7 +90,15 @@ def create_column_graphs(data, headers=None, graph_height=300, graph_width=400, 
 if __name__ == "__main__":
     # Replace this with your actual data
     data = np.random.randint(0, 100, size=(25, 7))
-    headers = ["Column 1", "Column 2", "Column 3", "Column 4", "Column 5", "Column 6", "Column 7"]
+    for inputs, targets in train_loader:
+        print(f"Input Sequence shape:", inputs.shape)
+        print("Input Sequence:", inputs)
+        print("Target Sequence shape:", targets.shape)
+        print("Target Sequence:", targets)
+        data = inputs
+        break  # Print only the first batch
+
+    headers = ["right_knee_angle 1", "left_knee_angle 2", "left_side_body_angle 3", "right_side_body_angle 4", "ankle_distance 5", "knee_distance 6", "hip_angle 7"]
 
     # Create and display the combined image with the row of graphs
     combined_graphs = create_column_graphs(data, headers)
