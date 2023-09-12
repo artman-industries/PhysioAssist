@@ -1,7 +1,7 @@
 import numpy as np
 from __global.processed_skeleton import ProcessedSkeleton
 from __global.utils import is_number_around
-from inference.generate_sequence.generate1 import generate_skeletons
+from inference.generate_sequence.generate_seq import generate_skeletons
 from inference.ready_to_squat.is_ready1 import is_ready_to_squat
 
 
@@ -59,13 +59,12 @@ def compare_skeleton_lists(list1, list2, similarity_threshold=0.1):
     return [compare_skeletons(s1, s2, similarity_threshold) for s1, s2 in zip(list1, list2)]
 
 
-def validate_skeleton_list(pl_model, initial_skeleton, skeleton_list, similarity_threshold=0.1):
+def validate_skeleton_list(model, skeleton_list, similarity_threshold=0.1):
     """
     Validate a list of skeletons to check if they "make sense" based on squat readiness and model predictions.
 
     Args:
-        pl_model (PLModel): The PyTorch Lightning model used for generating skeletons.
-        initial_skeleton (Skeleton): The initial skeleton to check for squat readiness.
+        model (PLModel): The PyTorch Lightning model used for generating skeletons.
         skeleton_list (list of Skeleton): The list of skeletons to validate.
         similarity_threshold (float, optional): The threshold for considering skeletons as similar.
             It represents the maximum acceptable difference between corresponding skeleton attributes.
@@ -83,12 +82,13 @@ def validate_skeleton_list(pl_model, initial_skeleton, skeleton_list, similarity
 
         The function assumes that the PLModel has already been trained and is ready for inference.
     """
+    initial_skeleton = skeleton_list[0]
     # Check if the first skeleton is ready to squat
     if not is_ready_to_squat(initial_skeleton):
         return 0  # The first skeleton is not ready to squat
 
     # Generate a list of expected skeletons based on the model
-    expected_skeletons = generate_skeletons(pl_model, initial_skeleton, num_skeletons=len(skeleton_list))
+    expected_skeletons = generate_skeletons(model, initial_skeleton, num_skeletons=len(skeleton_list)-1)
 
     # Check if the rest of the skeletons are similar to what the model predicted
     for i in range(1, len(skeleton_list)):  # Start from the second skeleton
