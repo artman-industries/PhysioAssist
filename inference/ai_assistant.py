@@ -1,8 +1,8 @@
 import numpy as np
 from __global.processed_skeleton import ProcessedSkeleton
 from __global.utils import is_number_around
-from inference._generate_sequence.generate1 import generate_skeletons
-from inference._ready_to_squat.is_ready1 import is_ready_to_squat
+from inference.generate_sequence.generate1 import generate_skeletons
+from inference.ready_to_squat.is_ready1 import is_ready_to_squat
 
 
 def compare_skeletons(skeleton1, skeleton2, similarity_threshold=0.1):
@@ -82,16 +82,6 @@ def validate_skeleton_list(pl_model, initial_skeleton, skeleton_list, similarity
            based on the initial skeleton. All skeletons should be similar to what the model predicted.
 
         The function assumes that the PLModel has already been trained and is ready for inference.
-
-    Example:
-        initial_skeleton = Skeleton(...)  # Provide the initial skeleton object
-        skeleton_list = [skeleton1, skeleton2, skeleton3, ...]  # List of skeletons to validate
-        pl_model = PLModel(...)  # Instantiate the PLModel
-
-        similarity_threshold = 0.1  # Adjust the similarity threshold as needed
-
-        result = validate_skeleton_list(pl_model, initial_skeleton, skeleton_list, similarity_threshold)
-        # Returns the index of the first skeleton that does not meet the criteria, or None if all pass.
     """
     # Check if the first skeleton is ready to squat
     if not is_ready_to_squat(initial_skeleton):
