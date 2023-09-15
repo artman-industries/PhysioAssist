@@ -35,7 +35,7 @@ def create_column_graphs(data, headers=None, graph_height=300, graph_width=400, 
         column_data = data[:, col_index]
         max_value = np.max(column_data)
         min_value = np.min(column_data)
-        value_range = max_value - min_value
+        value_range = int(max_value - min_value)
 
         # Draw the header
         if headers:
@@ -90,17 +90,18 @@ def create_column_graphs(data, headers=None, graph_height=300, graph_width=400, 
 if __name__ == "__main__":
     # Replace this with your actual data
     data = np.random.randint(0, 100, size=(25, 7))
+    i = 0 
     for inputs, targets in train_loader:
         print(f"Input Sequence shape:", inputs.shape)
         print("Input Sequence:", inputs)
         print("Target Sequence shape:", targets.shape)
         print("Target Sequence:", targets)
         data = inputs
-        break  # Print only the first batch
+        headers = ["right_knee_angle 1", "left_knee_angle 2", "left_side_body_angle 3", "right_side_body_angle 4", "ankle_distance 5", "knee_distance 6", "hip_angle 7"]
+        combined_graphs = create_column_graphs(data[0].numpy(), headers)
+        combined_graphs.save("combined_graphs" +str(i)+".png")
+        combined_graphs = create_column_graphs(data[1].numpy(), headers)
+        combined_graphs.save("combined_graphs" +str(i+1)+".png")
+        i = i+2
 
-    headers = ["right_knee_angle 1", "left_knee_angle 2", "left_side_body_angle 3", "right_side_body_angle 4", "ankle_distance 5", "knee_distance 6", "hip_angle 7"]
-
-    # Create and display the combined image with the row of graphs
-    combined_graphs = create_column_graphs(data, headers)
-    combined_graphs.show()
     # You can also save the combined image using combined_graphs.save("combined_graphs.png")
