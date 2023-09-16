@@ -12,6 +12,7 @@ dependencies:
   - lightning
   - tk
   - pillow=9.0
+#  - plotly
 # collect data:
   - ffmpeg
   - youtube-dl
