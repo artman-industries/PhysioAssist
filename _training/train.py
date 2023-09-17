@@ -77,4 +77,5 @@ def train_rnn_model():
     # possible to call with load=True and checkpoint_filename that we want to load
 
 
-train_rnn_model()
+if __name__ == '__main__':
+    train_rnn_model()
