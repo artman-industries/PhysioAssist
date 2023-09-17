@@ -2,13 +2,13 @@ from __global.processed_skeleton import ProcessedSkeleton
 import torch
 
 
-def generate_skeletons(model, initial_skeleton, num_skeletons=24):
+def generate_skeletons(model, initial_skeletons, num_skeletons=24):
     """
     Generate a list of skeletons using a PyTorch Lightning model and an initial skeleton.
 
     Args:
         model (PLModel): A PyTorch Lightning model used for generating skeletons.
-        initial_skeleton (ProcessedSkeleton): The initial skeleton from which to generate new skeletons.
+        initial_skeletons (list[ProcessedSkeleton]): A list of the initial skeletons from which to generate new skeletons.
         num_skeletons (int, optional): The number of skeletons to generate. Defaults to 24.
 
     Returns:
@@ -24,8 +24,8 @@ def generate_skeletons(model, initial_skeleton, num_skeletons=24):
     """
     generated_skeletons = []
 
-    # Convert the initial skeleton to a format compatible with the model (e.g., NumPy array or tensor)
-    initial_input = torch.tensor(initial_skeleton.to_numpy_array(), dtype=torch.float64).unsqueeze(0)
+    # Convert the initial skeletons to a format compatible with the model (tensor)
+    initial_input = torch.stack([torch.from_numpy(s.to_numpy_array()) for s in initial_skeletons]).unsqueeze(0)
 
     with torch.no_grad():
         # Generate 'num_skeletons' new skeletons

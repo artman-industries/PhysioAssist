@@ -43,7 +43,7 @@ for rep_id in database_api.get_rep_ids():
     # visualize_points_with_names(skeleton_list)
     rep = np.array([processed_skeleton.to_numpy_array() for processed_skeleton in processed_skeleton_list])
     reps.append(rep)
-reps = np.array(reps)
+reps = np.array(reps[:-1])
 
 # Set a random seed for reproducibility
 np.random.seed(42)
