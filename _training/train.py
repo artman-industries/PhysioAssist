@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 from _training.models.pl_model import PLModel
 from _training.models.inner_models.simple_rnn import RNNModel
-from _training.dataset.data_loader import train_loader
+from _training.dataset.data_loader import train_loader, test_loader
 from datetime import datetime
 import os
 
@@ -42,6 +42,7 @@ def train_model(model, load=False, checkpoint_given_filename=None):
 
     # Train the model
     trainer.fit(pl_model, train_loader)
+    trainer.test(dataloaders=test_loader)
 
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -56,6 +57,7 @@ def train_model(model, load=False, checkpoint_given_filename=None):
 
     # Save the checkpoint
     trainer.save_checkpoint(checkpoint_path)
+    return pl_model
 
 
 def train_rnn_model():
@@ -71,7 +73,7 @@ def train_rnn_model():
     # Initialize the Lightning module
     rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
     checkpoint_filename = f'rnn_{datetime.now()}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
-    train_model(rnn_model, False, checkpoint_filename)
+    pl_model = train_model(rnn_model, False, checkpoint_filename)
     # possible to call with load=True and checkpoint_filename that we want to load
 
 

@@ -46,3 +46,4 @@ def generate_skeletons(model, initial_skeletons, num_skeletons=24):
             initial_input = torch.tensor(new_skeleton.to_numpy_array(), dtype=torch.float64).unsqueeze(0)
 
     return generated_skeletons
+
