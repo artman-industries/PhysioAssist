@@ -1,4 +1,5 @@
 import pytorch_lightning as pl
+from sklearn.ensemble import RandomForestClassifier
 from _training.models.pl_model import PLModel
 from _training.models.inner_models.simple_rnn import RNNModel
 from _training.dataset.data_loader import train_loader
@@ -27,23 +28,12 @@ def load_model(checkpoint_directory=checkpoint_dir, checkpoint_file=None):
     else:
         return None, None
 
-def train_model(load=False):
+def train_model(model, load=False, checkpoint_given_filename=None):
     if load:
         # Load the model from the latest checkpoint file
-        pl_model, loaded_checkpoint_filename = load_model()
+        pl_model, loaded_checkpoint_filename = load_model(checkpoint_filename=checkpoint_given_filename)
     if not load or pl_model is None:
-        # No checkpoint files found, train a new model from scratch
-        num_attributes = 7  # todo: make it dynamic
-        # Hyper parameters
-        input_size = num_attributes
-        hidden_size = num_attributes * 4
-        output_size = num_attributes
-        num_layers = 1
-        learning_rate = 1e-3
-
-        # Initialize the Lightning module
-        rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
-        pl_model = PLModel(rnn_model)
+        pl_model = PLModel(model)
 
     # Initialize the Lightning Trainer
     trainer = pl.Trainer(max_epochs=10)  # Adjust max_epochs
@@ -56,11 +46,29 @@ def train_model(load=False):
     # Define the checkpoint filename with the values of the hyper parameters -
     if load and loaded_checkpoint_filename is not None:
         checkpoint_filename_list = loaded_checkpoint_filename.split('_')
-        checkpoint_filename_list[1] = now
-        checkpoint_filename = '_'.join(checkpoint_filename_list)
     else:
-        checkpoint_filename = f'rnn_{now}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
+        checkpoint_filename_list = checkpoint_given_filename.split('_')
+    checkpoint_filename_list[1] = now
+    checkpoint_filename = '_'.join(checkpoint_filename_list)
     checkpoint_path = os.path.join(checkpoint_dir, checkpoint_filename)
 
     # Save the checkpoint
     trainer.save_checkpoint(checkpoint_path)
+
+def train_rnn_model():
+        # No checkpoint files found, train a new model from scratch
+        num_attributes = 7  # todo: make it dynamic
+        # Hyper parameters
+        input_size = num_attributes
+        hidden_size = num_attributes * 4
+        output_size = num_attributes
+        num_layers = 1
+        learning_rate = 1e-3
+
+        # Initialize the Lightning module
+        rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
+        checkpoint_filename = f'rnn_{now}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
+        train_model(rnn_model, False, checkpoint_filename)
+        # possible to call with load=True and checkpoint_filename that we want to load
+
+def random_forest_model():
