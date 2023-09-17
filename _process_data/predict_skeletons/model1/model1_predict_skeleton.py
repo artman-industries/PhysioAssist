@@ -19,7 +19,7 @@ def model1_predict_skeleton(frame, skeleton='smpl+head_30'):
     coords = prediction['poses3d'][0].numpy()
     coord_dict = {}
     for i, joint_name in enumerate(model.per_skeleton_joint_names[skeleton].numpy().astype(str)):
-        coord_dict[NAME_DICT[joint_name[:4]]] = coords[0, i]
+        coord_dict[NAME_DICT[joint_name[:4]]] = coords[i]
     skeleton = Skeleton(
         pelvis=coord_dict['pelvis'],
         left_hip=coord_dict['left_hip'],
