@@ -1,6 +1,7 @@
 name: PhysioAssist_env
 channels:
   - conda-forge
+  - anaconda
   - defaults
 dependencies:
 # General:
@@ -12,6 +13,7 @@ dependencies:
   - lightning
   - tk
   - pillow=9.0
+  - plotly
 # collect data:
   - ffmpeg
   - youtube-dl
@@ -21,6 +23,8 @@ dependencies:
 # Process data:
   - tensorflow
   - tensorflow-hub
+# Prediction
+  - sklearn # conda install -c anaconda scikit-learn
   - pip:
       - yt-dlp
       - opencv-contrib-python
