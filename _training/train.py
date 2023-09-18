@@ -1,10 +1,12 @@
 import pytorch_lightning as pl
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from _training.models.pl_model import PLModel
 from _training.models.inner_models.simple_rnn import RNNModel
-from _training.dataset.data_loader import train_loader
+from _training.dataset.data_loader import get_train_test_split_rnn, split_test_train_and_inside
+from sklearn.metrics import mean_squared_error
 from datetime import datetime
 import os
+import numpy as np
 # Define the directory where the checkpoint files are saved
 checkpoint_dir = 'checkpoints'
 
@@ -67,8 +69,21 @@ def train_rnn_model():
 
         # Initialize the Lightning module
         rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
-        checkpoint_filename = f'rnn_{now}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
+        checkpoint_filename = f'rnn_{0}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
         train_model(rnn_model, False, checkpoint_filename)
         # possible to call with load=True and checkpoint_filename that we want to load
 
-def random_forest_model():
+def random_forest_model_train():
+    X_train, y_train, X_test, y_test = split_test_train_and_inside(0.8, 0.5)
+
+    # Create the model
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+
+    model.fit(X_train, y_train)
+
+    predictions = model.predict(X_test)
+
+    # Evaluate the model - just for checking reasonable
+    print(f'Accuracy: {mean_squared_error(y_test, predictions)}')
+    
+random_forest_model_train()
