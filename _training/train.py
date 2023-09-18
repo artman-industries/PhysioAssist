@@ -10,6 +10,7 @@ import numpy as np
 # Define the directory where the checkpoint files are saved
 checkpoint_dir = 'checkpoints'
 
+
 def load_model(checkpoint_directory=checkpoint_dir, checkpoint_file=None):
     # Check if the directory exists and contains any checkpoint files
     if os.path.exists(checkpoint_dir) and os.listdir(checkpoint_dir):
@@ -30,6 +31,7 @@ def load_model(checkpoint_directory=checkpoint_dir, checkpoint_file=None):
     else:
         return None, None
 
+
 def train_model(model, load=False, checkpoint_given_filename=None):
     if load:
         # Load the model from the latest checkpoint file
@@ -42,6 +44,7 @@ def train_model(model, load=False, checkpoint_given_filename=None):
 
     # Train the model
     trainer.fit(pl_model, train_loader)
+    trainer.test(dataloaders=test_loader)
 
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -56,16 +59,18 @@ def train_model(model, load=False, checkpoint_given_filename=None):
 
     # Save the checkpoint
     trainer.save_checkpoint(checkpoint_path)
+    return pl_model
+
 
 def train_rnn_model():
-        # No checkpoint files found, train a new model from scratch
-        num_attributes = 7  # todo: make it dynamic
-        # Hyper parameters
-        input_size = num_attributes
-        hidden_size = num_attributes * 4
-        output_size = num_attributes
-        num_layers = 1
-        learning_rate = 1e-3
+    # No checkpoint files found, train a new model from scratch
+    num_attributes = 7  # todo: make it dynamic
+    # Hyper parameters
+    input_size = num_attributes
+    hidden_size = num_attributes * 4
+    output_size = num_attributes
+    num_layers = 1
+    learning_rate = 1e-3
 
         # Initialize the Lightning module
         rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
