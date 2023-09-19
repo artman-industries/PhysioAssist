@@ -35,7 +35,6 @@ def generate_skeletons(model, initial_skeletons, num_skeletons=24):
     with torch.no_grad():
         # Generate 'num_skeletons' new skeletons
         for _ in range(num_skeletons):
-            print(f'{initial_input.shape=}')
             # Pass the initial skeleton through the pl_model to generate a new skeleton
             output = model(initial_input)
 
@@ -44,14 +43,12 @@ def generate_skeletons(model, initial_skeletons, num_skeletons=24):
 
             # Create a new Skeleton object from the generated array
             new_skeleton = ProcessedSkeleton.from_numpy_array(new_skeleton_array[-1])
-            current_pred = torch.from_numpy(new_skeleton.to_numpy_array()).unsqueeze(0)
+            current_pred = torch.from_numpy(new_skeleton.to_numpy_array()).unsqueeze(0).unsqueeze(0)
 
             # Append the new skeleton to the list
             generated_skeletons.append(new_skeleton)
 
             # Update the initial_input to include the new prediction
-            # initial_input = torch.tensor(new_skeleton.to_numpy_array(), dtype=torch.float64).unsqueeze(0)
-            # initial_input = torch.cat((initial_input, torch.from_numpy(new_skeleton.to_numpy_array()).unsqueeze(0)), dim=1)
             initial_input = torch.cat((initial_input, current_pred), dim=1)
 
     return generated_skeletons
@@ -85,4 +82,5 @@ if __name__ == '__main__':
 
     s1 = ProcessedSkeleton(None)
     s2 = ProcessedSkeleton(None)
-    seq = generate_skeletons(model, [s1, s2])
+    seq = generate_skeletons(model, [s1, s2], num_skeletons=4)
+    print(seq)
