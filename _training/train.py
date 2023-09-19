@@ -42,10 +42,11 @@ def train_model(model, load=False, checkpoint_given_filename=None):
         pl_model = PLModel(model)
 
     # Initialize the Lightning Trainer
-    trainer = pl.Trainer(max_epochs=10)  # Adjust max_epochs
+    trainer = pl.Trainer(max_epochs=100)  # Adjust max_epochs
 
     # Train the model
     trainer.fit(pl_model, train_loader)
+    trainer.test(dataloaders=train_loader)
     trainer.test(dataloaders=test_loader)
 
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
