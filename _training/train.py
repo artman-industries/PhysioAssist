@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error
 from datetime import datetime
 import os
 import numpy as np
+
 # Define the directory where the checkpoint files are saved
 checkpoint_dir = 'checkpoints'
 
@@ -33,6 +34,7 @@ def load_model(checkpoint_directory=checkpoint_dir, checkpoint_file=None):
 
 
 def train_model(model, load=False, checkpoint_given_filename=None):
+    train_loader, test_loader = get_train_test_split_rnn()
     if load:
         # Load the model from the latest checkpoint file
         pl_model, loaded_checkpoint_filename = load_model(checkpoint_filename=checkpoint_given_filename)
@@ -72,11 +74,12 @@ def train_rnn_model():
     num_layers = 1
     learning_rate = 1e-3
 
-        # Initialize the Lightning module
-        rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
-        checkpoint_filename = f'rnn_{0}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
-        train_model(rnn_model, False, checkpoint_filename)
-        # possible to call with load=True and checkpoint_filename that we want to load
+    # Initialize the Lightning module
+    rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
+    checkpoint_filename = f'rnn_{0}_input{input_size}_hidden{hidden_size}_output{output_size}_layers{num_layers}_lr{learning_rate}.ckpt'
+    train_model(rnn_model, False, checkpoint_filename)
+    # possible to call with load=True and checkpoint_filename that we want to load
+
 
 def random_forest_model_train():
     X_train, y_train, X_test, y_test = split_test_train_and_inside(0.8, 0.5)
@@ -90,5 +93,7 @@ def random_forest_model_train():
 
     # Evaluate the model - just for checking reasonable
     print(f'Accuracy: {mean_squared_error(y_test, predictions)}')
-    
-random_forest_model_train()
+
+
+if __name__ == '__main__':
+    train_rnn_model()

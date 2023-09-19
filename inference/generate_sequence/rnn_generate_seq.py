@@ -54,17 +54,33 @@ def generate_skeletons(model, initial_skeletons, num_skeletons=24):
     return generated_skeletons
 
 
-if __name__ == '__main__':
-    checkpoint_dir = 'checkpoints'
-    # TODO: load the model properly
+def rnn_generate_skeletons(initial_seq: list, num_skeletons=24, checkpoint_path: str = None):
+    if checkpoint_path is None:
+        # Define the name of your project folder
+        project_folder_name = "PhysioAssist"
+
+        # Get the current working directory
+        current_directory = os.getcwd()
+
+        # Iterate upwards in the directory structure until the project folder is found
+        while current_directory:
+            if os.path.basename(current_directory) == project_folder_name:
+                # If the project folder is found, construct the checkpoints path
+                checkpoints_path = os.path.join(current_directory, "_training", "checkpoints")
+                break
+            # Move up one level in the directory structure
+            current_directory = os.path.dirname(current_directory)
+
+    checkpoint_dir = str(checkpoints_path)  # '../../_training/checkpoints'
+
     # Get a list of all checkpoint files in the directory
     checkpoint_files = [os.path.join(checkpoint_dir, f) for f in os.listdir(checkpoint_dir) if f.endswith('.ckpt')]
 
     # Choose the latest checkpoint file based on its modification time
     latest_checkpoint_path = max(checkpoint_files, key=os.path.getmtime)
 
+    # TODO: load the model properly
     latest_model_checkpoint = torch.load(latest_checkpoint_path)
-    print(latest_model_checkpoint.keys())
     # latest_model = load_model()
 
     num_attributes = 7  # todo: make it dynamic
@@ -79,8 +95,13 @@ if __name__ == '__main__':
     rnn_model = RNNModel(input_size, hidden_size, output_size, num_layers)
     model = PLModel(rnn_model)
     model.load_state_dict(latest_model_checkpoint['state_dict'])
+    generated_seq = generate_skeletons(model, initial_seq, num_skeletons=num_skeletons)
+    return generated_seq
 
+
+if __name__ == '__main__':
     s1 = ProcessedSkeleton(None)
     s2 = ProcessedSkeleton(None)
-    seq = generate_skeletons(model, [s1, s2], num_skeletons=4)
-    print(seq)
+    initial_seq = [s1, s2]
+    seq = rnn_generate_skeletons(initial_seq)
+    print(len(seq))
