@@ -1,4 +1,6 @@
 import numpy as np
+import torch
+
 from __global.processed_skeleton import ProcessedSkeleton
 from __global.utils import is_number_around
 from inference.generate_sequence.rnn_generate_seq import generate_skeletons
@@ -68,6 +70,33 @@ def validate_skeletons(skeletons: list, generation_function, amount_of_skeletons
 
 def rnn_generate_function(seq):
     return rnn_generate_skeletons(seq, 25 - len(seq))  # todo: make 25 dynamic number
+
+
+def classic_model_generate_function(seq):
+    data_list = []
+
+    for i in range(len(seq)):
+        x = float(i) / len(seq)
+        y = x*x - x
+        # Create a tensor
+        right_knee_angle = torch.tensor(y)
+        left_knee_angle = torch.tensor(y)
+        left_side_body_angle = torch.tensor(180)
+        right_side_body_angle = torch.tensor(180)
+
+        # Assign fixed values for the last three entries
+        entry_5 = torch.tensor(seq[0].ankle_distance)
+        entry_6 = torch.tensor(seq[0].knee_distance)
+        entry_7 = torch.tensor(0)
+
+        # Concatenate the entries to create the tensor
+        squat_tensor = torch.cat([right_knee_angle, left_knee_angle, left_side_body_angle,
+                                  right_side_body_angle, entry_5, entry_6, entry_7])
+
+        # Append the tensor to the list
+        data_list.append(squat_tensor)
+
+    return data_list
 
 
 if __name__ == "__main__":
