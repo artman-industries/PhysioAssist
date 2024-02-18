@@ -3,11 +3,8 @@ import numpy as np
 from experiments.infra.generation_functions import *
 import plotly.graph_objects as go
 
-good_reps = np.random.rand(10, 25, 7)
-bad_reps = np.random.rand(10, 25, 7)
 
-
-def run_threshold_experiment(performance_evaluation_function, threshold_range, show_fig=True):
+def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_function, threshold_range, show_fig=True):
     """
     Run an experiment to evaluate squat performance using a given performance evaluation function
     and a range of thresholds.
