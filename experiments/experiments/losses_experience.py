@@ -5,8 +5,8 @@ from experiments.infra.generation_functions import *
 import plotly.graph_objects as go
 
 
-def run_initial_reps_experiment(good_reps, bad_reps, performance_evaluation_functions_list: list, threshold_list: list,
-                                show_fig=True):
+def run_losses_experiment(good_reps, bad_reps, performance_evaluation_functions_list: list, threshold_list: list,
+                          show_fig=True):
     assert len(performance_evaluation_functions_list) == len(threshold_list)
     reps_performances = [
         run_threshold_experiment(good_reps, bad_reps, performance_evaluation_function, [threshold], show_fig=False)[0]

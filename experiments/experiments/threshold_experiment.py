@@ -32,8 +32,8 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
     - The second figure shows the number of correct predictions against the threshold values.
     """
     # Evaluate performance for good and bad squats
-    good_squats = [performance_evaluation_function(rep) for rep in good_reps]
-    bad_squats = [performance_evaluation_function(rep) for rep in bad_reps]
+    good_squats_performance = [performance_evaluation_function(rep) for rep in good_reps]
+    bad_squats_performance = [performance_evaluation_function(rep) for rep in bad_reps]
 
     # List to store results for each threshold
     results_list = []
@@ -44,11 +44,24 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
     # Analyze performance for different thresholds
     for threshold in threshold_range:
         # Count the number of true positive, false positive, true negative, and false negative
-        true_positive = sum(np.any(array <= threshold) for array in good_squats)
-        false_positive = sum(np.any(array <= threshold) for array in bad_squats)
-        true_negative = sum(np.all(array > threshold) for array in bad_squats)
-        false_negative = sum(np.all(array > threshold) for array in good_squats)
-
+        true_positive = sum(
+            1 if sum(np.where(array <= threshold, 1, 0)) > 0 else 0
+            for array in good_squats_performance)
+        false_positive = sum(
+            1 if sum(np.where(array <= threshold, 1, 0)) > 0 else 0
+            for array in bad_squats_performance)
+        true_negative = sum(
+            1 if sum(np.where(array > threshold, 1, 0)) > 0 else 0
+            for array in bad_squats_performance)
+        false_negative = sum(
+            1 if sum(np.where(array > threshold, 1, 0)) > 0 else 0
+            for array in good_squats_performance)
+        print(f'threshold {threshold}:')
+        print(f'{true_positive=}')
+        print(f'{false_positive=}')
+        print(f'{true_negative=}')
+        print(f'{false_negative=}')
+        print('\n')
         # Calculate rates
         total_positive = true_positive + false_negative
         total_negative = true_negative + false_positive
@@ -87,6 +100,8 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
         f1_scores = [result['F1 Score'] for result in results_list]
         precision = [result['Precision'] for result in results_list]
         recall = [result['Recall'] for result in results_list]
+        true_positive_rate = [result['TPR'] for result in results_list]
+        false_negative_rate = [result['FNR'] for result in results_list]
 
         # Create the first Plotly figure (F1 score, precision, and recall)
         fig1 = go.Figure()
@@ -113,5 +128,16 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
             yaxis_title='Correct Predictions',
         )
         fig2.show()
+
+        fig3 = go.Figure()
+        fig3.add_trace(go.Scatter(x=thresholds, y=true_positive_rate, mode='lines', name='TPR'))
+        fig3.add_trace(go.Scatter(x=thresholds, y=false_negative_rate, mode='lines', name='FNR'))
+
+        fig3.update_layout(
+            title='TPR & FNR vs. Threshold',
+            xaxis_title='Threshold',
+            yaxis_title='TPR & FNR ',
+        )
+        fig3.show()
 
     return results_list

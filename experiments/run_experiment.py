@@ -4,7 +4,7 @@ from experiments.infra.generation_functions import *
 from experiments.infra.score_functions import mse
 from infra.infrastructure import measure_squat_performance
 from experiments.threshold_experiment import run_threshold_experiment
-from experiments.init_reps_experience import run_initial_reps_experiment
+from experiments.losses_experience import run_losses_experiment
 
 
 # data = deterministic_model_generation_function_trigo(25)
@@ -19,13 +19,16 @@ def eval_function(rep):
 
 
 def temp_function(rep):
-    return np.array([1, 2, 3, 4, 5, 6, 7, 8])
+    np.random.seed(1)
+    return np.random.rand(10)
 
 
 good_reps = np.random.rand(10, 25, 7)
 bad_reps = np.random.rand(10, 25, 7)
 
 # Run the experiment
-# results = run_threshold_experiment(good_reps, bad_reps, temp_function, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+results = run_threshold_experiment(good_reps=good_reps, bad_reps=bad_reps,
+                                   performance_evaluation_function=eval_function,
+                                   threshold_range=list(np.arange(0, 1, 0.05)))
 
-results = run_initial_reps_experiment(good_reps, bad_reps, [temp_function, temp_function], [0, 1])
+# results = run_losses_experiment(good_reps, bad_reps, [temp_function, temp_function], [0, 1])

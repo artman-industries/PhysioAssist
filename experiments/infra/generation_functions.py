@@ -40,11 +40,11 @@ def deterministic_model_generation_function_parabola(amount_of_frames):
 
 
 def trigo_knees(x):
-    return 180 - 90 * math.sin(math.pi * x)
+    return (180 - 90 * math.sin(math.pi * x)) / 360
 
 
 def trigo_body(x):
-    return 180 - 45 * math.sin(math.pi * x)
+    return (180 - 45 * math.sin(math.pi * x)) / 360
 
 
 def deterministic_model_generation_function_trigo(amount_of_frames):
