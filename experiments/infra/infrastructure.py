@@ -21,7 +21,9 @@ def measure_squat_performance(skeletons: np.array, score_function, generation_fu
     # Generate a list of expected skeletons based on the model
     trusted_skeletons = skeletons[:amount_of_skeletons_to_use_for_prediction]
     expected_skeletons = generation_function(trusted_skeletons)
+    print("expected_skeletons: ", expected_skeletons)
     untrusted_skeletons = skeletons[amount_of_skeletons_to_use_for_prediction:]
+    print("untrusted_skeletons: ", untrusted_skeletons)
 
     scores = [score_function(s1, s2) for s1, s2 in zip(expected_skeletons, untrusted_skeletons)]
     scores = np.array(scores)

@@ -1,7 +1,8 @@
 import numpy as np
-
-from experiments.experiments.threshold_experiment import run_threshold_experiment
-from experiments.infra.generation_functions import *
+import sys
+sys.path.append('..')
+from experiments.threshold_experiment import run_threshold_experiment
+from infra.generation_functions import *
 import plotly.graph_objects as go
 
 

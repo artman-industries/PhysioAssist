@@ -17,8 +17,8 @@ def _deterministic_model_abstract_generation_function(knee_angle_function, body_
         left_knee_angle = y_knee
         left_side_body_angle = y_body
         right_side_body_angle = y_body
-        ankle_distance = 0.8
-        knee_distance = 1.25 - y_knee / 540
+        ankle_distance = 0.8 * 360
+        knee_distance = (1.25 - y_knee / 540) * 360
         hip_angle = 0
 
         # Concatenate the entries to create the tensor
@@ -40,11 +40,11 @@ def deterministic_model_generation_function_parabola(amount_of_frames):
 
 
 def trigo_knees(x):
-    return (180 - 90 * math.sin(math.pi * x)) / 360
+    return (90 * math.sin(math.pi * x))
 
 
 def trigo_body(x):
-    return (180 - 45 * math.sin(math.pi * x)) / 360
+    return (45 * math.sin(math.pi * x))
 
 
 def deterministic_model_generation_function_trigo(amount_of_frames):

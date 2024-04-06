@@ -1,6 +1,7 @@
 import numpy as np
-
-from experiments.infra.generation_functions import *
+import sys
+sys.path.append('..')
+from infra.generation_functions import *
 import plotly.graph_objects as go
 
 
