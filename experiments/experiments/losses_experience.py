@@ -1,19 +1,21 @@
 import numpy as np
 import sys
 sys.path.append('..')
+import os
 from experiments.threshold_experiment import run_threshold_experiment
 from infra.generation_functions import *
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 
-def run_losses_experiment(good_reps, bad_reps, performance_evaluation_functions_list: list, threshold_list: list,
+def run_losses_experiment(good_reps, bad_reps, performance_evaluation_functions_list: list, threshold_list: list, models_names: list, 
                           show_fig=True):
     assert len(performance_evaluation_functions_list) == len(threshold_list)
     reps_performances = [
-        run_threshold_experiment(good_reps, bad_reps, performance_evaluation_function, [threshold], show_fig=False)[0]
+        run_threshold_experiment(good_reps, bad_reps, performance_evaluation_function, [threshold], model_name, show_fig=False)[0]
         for
-        threshold, performance_evaluation_function in
-        zip(threshold_list, performance_evaluation_functions_list)]
+        threshold, performance_evaluation_function, model_name in
+        zip(threshold_list, performance_evaluation_functions_list, models_names)]
 
     if show_fig:
         # Extract data for plotting
@@ -23,9 +25,9 @@ def run_losses_experiment(good_reps, bad_reps, performance_evaluation_functions_
         recall = [result['Recall'] for result in reps_performances]
 
         # List to store correct predictions for each threshold
-        correct_predictions_list = [result['TPR'] + result['TNR'] for result in reps_performances]
+        correct_predictions_list = [result['correct_predictions'] for result in reps_performances]
 
-        # # Create the first Plotly figure (F1 score, precision, and recall)
+        # Create the first Plotly figure (F1 score, precision, and recall)
         # fig1 = go.Figure()
         # fig1.add_trace(go.Scatter(x=thresholds, y=f1_scores, mode='lines', name='F1 Score'))
         # fig1.add_trace(go.Scatter(x=thresholds, y=precision, mode='lines', name='Precision'))
@@ -36,14 +38,43 @@ def run_losses_experiment(good_reps, bad_reps, performance_evaluation_functions_
         #     yaxis_title='Score',
         #     legend=dict(x=0, y=1, traceorder='normal', orientation='h')
         # )
-        # fig1.show()
+        # # Save the figure as HTML file
+        # html_file_path = "first_experiment_Evaluation Metrics.html"
+        # fig1.write_html(html_file_path, auto_open=True)
+
+        # # Print the path to the HTML file
+        # print("Plotly graph saved as:", os.path.abspath(html_file_path))
+
+        # Define the model names and their performance metrics
+        metrics = {
+            "Precision": [result['Precision'] for result in reps_performances],
+            "Recall": [result['Recall'] for result in reps_performances],
+            "F1 Score": [result['F1 Score'] for result in reps_performances],
+        }
+
+        # Plot each metric for each model
+        fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(12, 16), sharex=True, gridspec_kw={'hspace': 0.5})
+        for i, (metric, values) in enumerate(metrics.items()):
+            ax = axes[i]
+            ax.bar(models_names, values)
+            ax.set_title(metric)
+            ax.set_ylabel(metric)
+
+        plt.tight_layout()
+        plt.show()
+
 
         # Create the second Plotly figure (Correct predictions)
         fig2 = go.Figure()
-        fig2.add_trace(go.Scatter(x=list(range(len(threshold_list))), y=correct_predictions_list, mode='lines', name='Correct Predictions'))
+        fig2.add_trace(go.Scatter(x=models_names, y=correct_predictions_list, mode='lines', name='Correct Predictions'))
         fig2.update_layout(
             title='Correct Predictions vs. model number',
             xaxis_title='model number',
             yaxis_title='Correct Predictions',
         )
-        fig2.show()
+        # Save the figure as HTML file
+        html_file_path = "first_experiment_correct_predictions.html"
+        fig2.write_html(html_file_path, auto_open=True)
+
+        # Print the path to the HTML file
+        print("Plotly graph saved as:", os.path.abspath(html_file_path))

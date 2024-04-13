@@ -3,9 +3,10 @@ import sys
 sys.path.append('..')
 from infra.generation_functions import *
 import plotly.graph_objects as go
+import os
 
 
-def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_function, threshold_range, show_fig=True):
+def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_function, threshold_range, model_name, show_fig=True):
     """
     Run an experiment to evaluate squat performance using a given performance evaluation function
     and a range of thresholds.
@@ -31,10 +32,11 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
     If show_fig is True, two Plotly figures are created and displayed:
     - The first figure shows F1 score, precision, and recall against the threshold values.
     - The second figure shows the number of correct predictions against the threshold values.
-    """
+    # """
     # Evaluate performance for good and bad squats
     good_squats_performance = [performance_evaluation_function(rep) for rep in good_reps]
     bad_squats_performance = [performance_evaluation_function(rep) for rep in bad_reps]
+
 
     # List to store results for each threshold
     results_list = []
@@ -46,18 +48,19 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
     for threshold in threshold_range:
         # Count the number of true positive, false positive, true negative, and false negative
         true_positive = sum(
-            1 if sum(np.where(array <= threshold, 1, 0)) > 0 else 0
+            1 if sum(np.where(array <= threshold, 1, 0)) >= len(array)/2 else 0
             for array in good_squats_performance)
         false_positive = sum(
-            1 if sum(np.where(array <= threshold, 1, 0)) > 0 else 0
+            1 if sum(np.where(array <= threshold, 1, 0)) >= len(array)/2 else 0
             for array in bad_squats_performance)
         true_negative = sum(
-            1 if sum(np.where(array > threshold, 1, 0)) > 0 else 0
+            1 if sum(np.where(array > threshold, 1, 0)) > len(array)/2 else 0
             for array in bad_squats_performance)
         false_negative = sum(
-            1 if sum(np.where(array > threshold, 1, 0)) > 0 else 0
+            1 if sum(np.where(array > threshold, 1, 0)) > len(array)/2 else 0
             for array in good_squats_performance)
         print(f'threshold {threshold}:')
+        print(f'{model_name=}')
         print(f'{true_positive=}')
         print(f'{false_positive=}')
         print(f'{true_negative=}')
@@ -84,6 +87,7 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
             'FPR': false_positive_rate,
             'TNR': true_negative_rate,
             'FNR': false_negative_rate,
+            'correct_predictions': true_positive + true_negative,
             'Precision': precision,
             'Recall': recall,
             'F1 Score': f1_score,
@@ -115,7 +119,12 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
             yaxis_title='Score',
             legend=dict(x=0, y=1, traceorder='normal', orientation='h')
         )
-        fig1.show()
+                # Save the figure as HTML file
+        html_file_path = "Evaluation_Metrics_vs_Threshold.html"
+        fig1.write_html(html_file_path, auto_open=True)
+
+        # Print the path to the HTML file
+        print("Plotly graph saved as:", os.path.abspath(html_file_path))
 
         # Extract data for plotting correct predictions
         correct_predictions = correct_predictions_list
@@ -128,7 +137,12 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
             xaxis_title='Threshold',
             yaxis_title='Correct Predictions',
         )
-        fig2.show()
+                # Save the figure as HTML file
+        html_file_path = "Correct_Predictions_vs_Threshold.html"
+        fig2.write_html(html_file_path, auto_open=True)
+
+        # Print the path to the HTML file
+        print("Plotly graph saved as:", os.path.abspath(html_file_path))
 
         fig3 = go.Figure()
         fig3.add_trace(go.Scatter(x=thresholds, y=true_positive_rate, mode='lines', name='TPR'))
@@ -139,6 +153,11 @@ def run_threshold_experiment(good_reps, bad_reps, performance_evaluation_functio
             xaxis_title='Threshold',
             yaxis_title='TPR & FNR ',
         )
-        fig3.show()
+        # Save the figure as HTML file
+        html_file_path = "TPR&FNR_vs_Threshold.html"
+        fig3.write_html(html_file_path, auto_open=True)
+
+        # Print the path to the HTML file
+        print("Plotly graph saved as:", os.path.abspath(html_file_path))
 
     return results_list
